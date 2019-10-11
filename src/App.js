@@ -5,8 +5,6 @@ import {useGesture} from "react-with-gesture";
 import clamp from "lodash-es/clamp";
 import {animated, useSpring} from 'react-spring'
 
-// spin 3s linear infinite
-
 const IMAGES = [
   'https://i.imgur.com/sUBPiUJ.png',
   'https://i.imgur.com/QnqSVWm.png',
@@ -14,7 +12,7 @@ const IMAGES = [
 ];
 
 function App() {
-  const {width} = useWindowDimensions();
+  const {height, width} = useWindowDimensions();
 
   useEffect(() => IMAGES.forEach(src => new Image().src = src)); // prefetch images
 
@@ -42,15 +40,15 @@ function App() {
       // we detected a double-click
 
       if (flipped) {
-          setTimeout(() => {
-            setBackImage(nextUnusedImage());
-          }, 1000);
-        } else {
-          setTimeout(() => {
-            setFrontImage(nextUnusedImage());
-          }, 1000);
-        }
-        setFlipped(f => !f);
+        setTimeout(() => {
+          setBackImage(nextUnusedImage());
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          setFrontImage(nextUnusedImage());
+        }, 1000);
+      }
+      setFlipped(f => !f);
 
       clearTimeout(doubleClickTimeout);
       doubleClickTimeout = null
@@ -70,20 +68,29 @@ function App() {
     }
   };
 
+  const maxWidth = width * 0.8;
+  const maxHeight = height / 2;
+  let textsPaddingBottom = 10;
+  if (maxHeight > maxWidth) {
+    textsPaddingBottom = 100;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
+        <div className="texts" style={{paddingBottom: textsPaddingBottom}}>
+          <img style={{maxWidth: maxWidth, maxHeight: maxHeight}} src="https://i.imgur.com/RS3aQRy.png" alt="texts"/>
+        </div>
         <animated.div className="grabber" {...bind()} style={{transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`), position: 'absolute', top: 0}}>
           <div onClick={() => handleClicks()}>
             <animated.div className="flipper-side" style={{opacity: opacity.interpolate(o => 1 - o), transform}}>
-              <img className="imager" width={width / 3} src={IMAGES[frontImage]} alt="alt"/>
+              <img className="imager" style={{maxWidth: maxWidth, maxHeight: maxHeight}} src={IMAGES[frontImage]} alt="alt"/>
             </animated.div>
             <animated.div className="flipper-side" style={{opacity, transform: transform.interpolate(t => `${t} rotateX(180deg)`)}}>
-              <img className="imager" width={width / 3} src={IMAGES[backImage]} alt="alt"/>
+              <img className="imager" style={{maxWidth: maxWidth, maxHeight: maxHeight}} width={width / 3} src={IMAGES[backImage]} alt="alt"/>
             </animated.div>
           </div>
         </animated.div>
-
       </header>
     </div>
   );

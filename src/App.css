@@ -48,3 +48,8 @@ button {
     cursor: pointer;
     will-change: transform, opacity;
 }
+
+.texts {
+    position: absolute;
+    bottom: 0;
+}
