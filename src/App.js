@@ -87,7 +87,7 @@ function App() {
               <img className="imager" style={{maxWidth: maxWidth, maxHeight: maxHeight}} src={IMAGES[frontImage]} alt="alt"/>
             </animated.div>
             <animated.div className="flipper-side" style={{opacity, transform: transform.interpolate(t => `${t} rotateX(180deg)`)}}>
-              <img className="imager" style={{maxWidth: maxWidth, maxHeight: maxHeight}} width={width / 3} src={IMAGES[backImage]} alt="alt"/>
+              <img className="imager" style={{maxWidth: maxWidth, maxHeight: maxHeight}} src={IMAGES[backImage]} alt="alt"/>
             </animated.div>
           </div>
         </animated.div>
