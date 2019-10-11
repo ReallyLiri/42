@@ -37,8 +37,8 @@ function App() {
 
   const handleClicks = () => {
     if (clickTimeout !== null) {
-      setCurrentImage(safeIndex(currentImage + 1));
-      setFlipped(flipped => !flipped);
+      //setCurrentImage(safeIndex(currentImage + 1));
+      setFlipped(f => !f);
       clearTimeout(clickTimeout);
       clickTimeout = null
     } else {
@@ -49,22 +49,25 @@ function App() {
     }
   };
 
-  console.error(opacity);
-
   const safeIndex = (i) => (i % IMAGES.length);
 
   return (
     <div className="App">
       <header className="App-header">
-        <animated.div {...bind()} style={{transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`), position: 'absolute', top: 0}}>
-          <button onClick={() => handleClicks()}>
+        <animated.div className="grabber" {...bind()} style={{transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`), position: 'absolute', top: 0}}>
+        <div onClick={() => handleClicks()}>
+          <animated.div className="flipper-side" style={{opacity: opacity.interpolate(o => 1 - o), transform}}>
             <img className="imager" width={r} src={IMAGES[currentImage]} alt="alt"/>
-          </button>
+          </animated.div>
+          <animated.div className="flipper-side" style={{opacity, transform: transform.interpolate(t => `${t} rotateX(180deg)`)}}>
+            <img className="imager" width={r} src={IMAGES[safeIndex(currentImage+1)]} alt="alt"/>
+          </animated.div>
+        </div>
         </animated.div>
+
       </header>
     </div>
   );
 }
-
 
 export default App;
