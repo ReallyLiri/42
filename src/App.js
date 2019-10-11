@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import useWindowDimensions from "./dimensions";
 import {useGesture} from "react-with-gesture";
@@ -14,13 +14,12 @@ const IMAGES = [
 ];
 
 function App() {
-  const {height, width} = useWindowDimensions();
-  const r = width / 3;
-  let clickTimeout = null;
+  const {width} = useWindowDimensions();
 
   useEffect(() => IMAGES.forEach(src => new Image().src = src)); // prefetch images
 
-  const [currentImage, setCurrentImage] = useState(0);
+  const [frontImage, setFrontImage] = useState(0);
+  const [backImage, setBackImage] = useState(1);
 
   const [{xy}, setXy] = useSpring(() => ({xy: [0, 0]}));
   const bind = useGesture(({down, delta, velocity}) => {
@@ -29,40 +28,60 @@ function App() {
   });
 
   const [flipped, setFlipped] = useState(false);
-  const { transform, opacity } = useSpring({
+  const {transform, opacity} = useSpring({
     opacity: flipped ? 1 : 0,
     transform: `perspective(600px) rotateX(${flipped ? 180 : 0}deg)`,
-    config: { mass: 5, tension: 500, friction: 80 }
+    config: {mass: 5, tension: 500, friction: 80}
   });
 
+  let doubleClickTimeout = null;
+
   const handleClicks = () => {
-    if (clickTimeout !== null) {
-      //setCurrentImage(safeIndex(currentImage + 1));
-      setFlipped(f => !f);
-      clearTimeout(clickTimeout);
-      clickTimeout = null
+    if (doubleClickTimeout !== null) {
+
+      // we detected a double-click
+
+      if (flipped) {
+          setTimeout(() => {
+            setBackImage(nextUnusedImage());
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            setFrontImage(nextUnusedImage());
+          }, 1000);
+        }
+        setFlipped(f => !f);
+
+      clearTimeout(doubleClickTimeout);
+      doubleClickTimeout = null
     } else {
-      clickTimeout = setTimeout(() => {
-        clearTimeout(clickTimeout);
-        clickTimeout = null
+      doubleClickTimeout = setTimeout(() => {
+        clearTimeout(doubleClickTimeout);
+        doubleClickTimeout = null
       }, 500)
     }
   };
 
-  const safeIndex = (i) => (i % IMAGES.length);
+  const nextUnusedImage = () => {
+    for (let i = 0; i < IMAGES.length; i++) {
+      if (i !== frontImage && i !== backImage) {
+        return i;
+      }
+    }
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <animated.div className="grabber" {...bind()} style={{transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`), position: 'absolute', top: 0}}>
-        <div onClick={() => handleClicks()}>
-          <animated.div className="flipper-side" style={{opacity: opacity.interpolate(o => 1 - o), transform}}>
-            <img className="imager" width={r} src={IMAGES[currentImage]} alt="alt"/>
-          </animated.div>
-          <animated.div className="flipper-side" style={{opacity, transform: transform.interpolate(t => `${t} rotateX(180deg)`)}}>
-            <img className="imager" width={r} src={IMAGES[safeIndex(currentImage+1)]} alt="alt"/>
-          </animated.div>
-        </div>
+          <div onClick={() => handleClicks()}>
+            <animated.div className="flipper-side" style={{opacity: opacity.interpolate(o => 1 - o), transform}}>
+              <img className="imager" width={width / 3} src={IMAGES[frontImage]} alt="alt"/>
+            </animated.div>
+            <animated.div className="flipper-side" style={{opacity, transform: transform.interpolate(t => `${t} rotateX(180deg)`)}}>
+              <img className="imager" width={width / 3} src={IMAGES[backImage]} alt="alt"/>
+            </animated.div>
+          </div>
         </animated.div>
 
       </header>
