@@ -74,6 +74,14 @@ function App() {
   if (maxHeight > maxWidth) {
     textsPaddingBottom = 100;
   }
+  const isAndroid = /(android)/i.test(navigator.userAgent);
+  if (isAndroid) {
+    textsPaddingBottom = 145;
+  }
+  const isApple = /(ipod|iphone|ipad)/i.test(navigator.userAgent);
+  if (isApple) {
+    textsPaddingBottom = 300;
+  }
 
   return (
     <div className="App">
@@ -97,4 +105,3 @@ function App() {
 }
 
 export default App;
-
