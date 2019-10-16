@@ -87,7 +87,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className="texts" style={{paddingBottom: textsPaddingBottom}}>
-          <img style={{maxWidth: maxWidth, maxHeight: maxHeight}} src="https://i.imgur.com/RS3aQRy.png" alt="texts"/>
+          <img style={{maxWidth: maxWidth, maxHeight: maxHeight}} src="https://i.imgur.com/SPV9q5c.png" alt="texts"/>
         </div>
         <animated.div className="grabber" {...bind()} style={{transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`), position: 'absolute', top: 0}}>
           <div onClick={() => handleClicks()}>
