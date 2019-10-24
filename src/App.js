@@ -16,8 +16,9 @@ function App() {
 
   useEffect(() => IMAGES.forEach(src => new Image().src = src)); // prefetch images
 
-  const [frontImage, setFrontImage] = useState(0);
-  const [backImage, setBackImage] = useState(1);
+  let initialImage = Math.floor(Math.random() * (IMAGES.length + 1));
+  const [frontImage, setFrontImage] = useState(initialImage);
+  const [backImage, setBackImage] = useState((initialImage + 1) % IMAGES.length);
 
   const [{xy}, setXy] = useSpring(() => ({xy: [0, 0]}));
   const bind = useGesture(({down, delta, velocity}) => {
